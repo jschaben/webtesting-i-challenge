@@ -1,51 +1,47 @@
-const enhancer = require('./enhancer.js');
+const { succeed, fail, repair } = require("./enhancer.js");
 // test away!
 
-describe('the enhancer', () => {
-    
-    describe('the succeed function', () => {
+let testItem = {};
 
-        it('should enhance the item by 10', () => {
-            const item = {
-                name: 'sword',
-                enhancement: 7,
-                level: 3
-            };
-            const success = enhancer.success(item)
-            expect(success.enhancement).toBe(7)
-        })    
+it("should set item durability to 100", function() {
+  testItem.durability = 60;
+  const fixItem = repair(testItem);
+  expect(fixItem.durability).toBe(100);
+});
 
-        it('should not enhance and return the item', () => {
-            const item = {
-                name: 'sword',
-                enhancement: 7,
-                level: 10
-            };
-            const success = enhancer.success(item)
-            expect(success.enhancement).toBe(17)
-        })
-    })
+it("should increase item enhancement on success", function() {
+  testItem.enhancement = 3;
+  const upgrade = succeed(testItem);
+  expect(upgrade.enhancement).toBe(4);
+});
 
-    describe('the fail status', () => {
-        it('should lower enhancement level by 1 if not high enough level', () => {
-            const item = {
-                name: 'sword',
-                enhancement: 7,
-                level: 3
-            };
-            const fail = enhancer.fail(item)
-            expect(fail.enhancement).toBe(6)
-        })
-    })
+it("should decrease item durability on fail", function() {
+  const newItem = {
+    durability: 56,
+    enhancement: 14
+  };
 
-    describe('the repair status', () => {
-        it('should repaire the durabilty of the item', () => {
-            const item = {
-                name: 'sword',
-                durability: 2
-            };
-            const repair = enhancer.repair(item)
-            expect(repair.durability).toBe(100)
-        })
-    })
-})
+  const newFail = fail(newItem);
+  expect(newFail.enhancement).toBe(14);
+  expect(newFail.durability).toBe(51);
+});
+
+it("should decrease item durability by 5 over level 15", function() {
+  testItem = {
+    enhancement: 15,
+    durability: 32
+  };
+  const newFail = fail(testItem);
+  expect(newFail.durability).toBe(22);
+  expect(newFail.enhancement).toBe(15);
+});
+
+it("should decrease item durability and enhancement on items over level 16", function() {
+  testItem = {
+    durability: 84,
+    enhancement: 17
+  };
+  const testFail = fail(testItem);
+  expect(testFail.enhancement).toBe(16);
+  expect(testFail.durability).toBe(74);
+});
