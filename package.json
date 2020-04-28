@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/jschaben/webtesting-i-challenge#readme",
   "devDependencies": {
-    "jest": "^25.4.0"
+    "jest": "^25.4.0",
+    "nodemon": "^2.0.3"
   },
   "dependencies": {
     "express": "^4.17.1",
